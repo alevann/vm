@@ -8,7 +8,7 @@ The A1 comes with both a compiler and a VM that executes the code compiled by th
 
 Compile the compiler:
 ```
-gcc cmp.c -o cmp
+gcc compiler/*.c -o a1c
 ```
 
 Compile the vm:
