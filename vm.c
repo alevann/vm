@@ -43,8 +43,8 @@ void skip_bytes (FILE* file, size_t bytes)
 
 char* gtkn (FILE* file)
 {
-  char* out = malloc(sizeof(uint8_t) * 2);
-  fread(out, sizeof(uint8_t), 2, file);
+  char* out = malloc(sizeof(uint8_t) * 1);
+  fread(out, sizeof(uint8_t), 1, file);
   return out;
 }
 
