@@ -48,6 +48,35 @@ Arguments: (2)
 
 The result of the addition is stored in the first register.
 
+#### MIN
+
+The MIN instructions takes two values and performs a substraction.
+
+Arguments: (2)
+1. A register
+1. A register or literal
+
+The result of the substraction is stored in the first register.
+
+#### MUL
+
+The MUL instructions takes two values and performs a multiplication.
+
+Arguments: (2)
+1. A register
+1. A register or literal
+
+The result of the multiplication is stored in the first register.
+
+#### DIV
+
+The DIV instructions takes two values and performs a division.
+
+Arguments: (2)
+1. A register
+1. A register or literal
+
+The result of the division is stored in the first register.
 #### SET
 
 The SET instruction writes a value to a register.

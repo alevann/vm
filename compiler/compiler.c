@@ -14,6 +14,12 @@ uint8_t gop (token* tkn)
     return ADD;
   if (strcmp(tkn->str->data, "OUT") == 0)
     return OUT;
+  if (strcmp(tkn->str->data, "MUL") == 0)
+    return MUL;
+  if (strcmp(tkn->str->data, "DIV") == 0)
+    return DIV;
+  if (strcmp(tkn->str->data, "SUB") == 0)
+    return SUB;
   
   return ERR;
 }
@@ -69,6 +75,9 @@ int main (int argc, char* argv [])
     {
     case SET:
     case ADD:
+    case MUL:
+    case DIV:
+    case SUB:
       // Get the two operands and write them to the file
       token* lhs = tokens[++i];
       token* rhs = tokens[++i];

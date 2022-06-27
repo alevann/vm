@@ -1,0 +1,4 @@
+SET A 6
+SET B 6
+MUL A B
+OUT A

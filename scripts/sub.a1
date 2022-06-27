@@ -1,0 +1,4 @@
+SET A 5
+SET B 4
+SUB A B
+OUT A

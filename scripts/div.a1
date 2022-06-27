@@ -1,0 +1,4 @@
+SET A 3
+SET B 9
+DIV B A
+OUT B

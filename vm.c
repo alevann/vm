@@ -82,6 +82,39 @@ void op_out (regis* r, FILE* f)
   free(tkn);
 }
 
+void op_mul (regis* r, FILE* f)
+{
+  char* lhs = gtkn(f);
+  char* rhs = gtkn(f);
+
+  REG_V(r, REG_O(lhs)) = REG_V(r, REG_O(lhs)) * REG_V(r, REG_O(rhs));
+
+  free(lhs);
+  free(rhs);
+}
+
+void op_div (regis* r, FILE* f)
+{
+  char* lhs = gtkn(f);
+  char* rhs = gtkn(f);
+
+  REG_V(r, REG_O(lhs)) = REG_V(r, REG_O(lhs)) / REG_V(r, REG_O(rhs));
+
+  free(lhs);
+  free(rhs);
+}
+
+void op_min (regis* r, FILE* f)
+{
+  char* lhs = gtkn(f);
+  char* rhs = gtkn(f);
+
+  REG_V(r, REG_O(lhs)) = REG_V(r, REG_O(lhs)) - REG_V(r, REG_O(rhs));
+
+  free(lhs);
+  free(rhs);
+}
+
 int main (int argc, char* argv[])
 {
   if (argc == 1)
@@ -116,7 +149,22 @@ int main (int argc, char* argv[])
       printf("Reached OUT\n");
       op_out(regs, file);
       break;
-    
+    case MUL:
+      printf("Reached MUL\n");
+      op_mul(regs, file);
+      dbg_log_regs(regs);
+      break;
+    case DIV:
+      printf("Reached DIV\n");
+      op_div(regs, file);
+      dbg_log_regs(regs);
+      break;
+    case SUB:
+      printf("Reached SUB\n");
+      op_min(regs, file);
+      dbg_log_regs(regs);
+      break;
+
     case ERR:
       printf("Reached ERR instruction\n");
       fclose(file);

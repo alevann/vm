@@ -20,7 +20,7 @@ void dbg_log_tkns (token* tkns [], size_t size)
 
 char* dbg_display_tkn (token* tkn)
 {
-  char* types [] = { "UNK", "OPR", "LIT", "REG" };
+  char* types [] = { "UNK", "OPR", "LIT", "REG", "MUL", "DIV", "SUB" };
   
   // hope to never overflow, pc battery is almost dead
   char* out = malloc(sizeof(char) * 2048);
@@ -35,9 +35,9 @@ int isop (string* str)
   if (str->length < 3)
     return 0;
   
-  char* ops[5] = { "ERR", "SET", "ADD", "END", "OUT" };
+  char* ops[] = { "ERR", "SET", "ADD", "END", "OUT", "MUL", "DIV", "SUB" };
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 8; i++)
   {
     if (strcmp(str->data, ops[i]) == 0)
       return 1;
