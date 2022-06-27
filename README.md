@@ -32,22 +32,35 @@ Registers from A to D can be used freely and have no special behaviour or meanin
 
 #### Registers E and F
 
-Register E is the 'result' register - i.e. the result of mathematical operations will be written here overriding what was in there before.
+Register E will be used for functions return values.
 
 Register F is the 'flag' register - useless as of now.
 
 ### Instruction set
 
-The A1 currently supports a few instructions:
+#### ADD
 
-* SET: sets the value of the right hand operand to that of the left hand operand
-* ADD: adds the value of the right hand operand to that of the left hand operand and writes the value in E
-* OUT: prints the passed value to stdout (i need it for debugging lol)
+The ADD instruction takes two values and performs an addition.
 
-## Ingore this
+Arguments: (2)
+1. A register
+1. A register or a literal
 
-I need this for later:
+The result of the addition is stored in the first register.
 
-```
-gcc ./cmp.c -o cmp && ./cmp ./add.a1 && xxd ./add.ax && gcc vm.c -o vm && ./vm add.ax
-```
+#### SET
+
+The SET instruction writes a value to a register.
+
+Arguments: (2)
+1. A register
+1. A register or a literal
+
+The value previously stored in the register is completely overwritten.
+
+#### OUT
+
+The OUT instruction writes the value stored in a register to STDOUT.
+
+Arguments: (1)
+1. A register
