@@ -67,7 +67,7 @@ void op_add (regis* r, FILE* f)
   char* lhs = gtkn(f);
   char* rhs = gtkn(f);
 
-  r->E = REG_V(r, REG_O(lhs)) + REG_V(r, REG_O(rhs));
+  REG_V(r, REG_O(lhs)) = REG_V(r, REG_O(lhs)) + REG_V(r, REG_O(rhs));
 
   free(lhs);
   free(rhs);
