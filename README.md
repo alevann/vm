@@ -48,9 +48,9 @@ Arguments: (2)
 
 The result of the addition is stored in the first register.
 
-#### MIN
+#### SUB
 
-The MIN instructions takes two values and performs a substraction.
+The SUB instructions takes two values and performs a substraction.
 
 Arguments: (2)
 1. A register
