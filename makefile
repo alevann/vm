@@ -14,7 +14,7 @@ compiler: build
 machine: build
 	gcc machine/*.c include/*.c -o $(VM) -I include/
 
-cbaes: clean build compiler machine
+cbcates: clean build compiler machine
 	$(CMP) scripts/$(SCRIPT).a1
 	$(VM) $(SCRIPT).ax
 
