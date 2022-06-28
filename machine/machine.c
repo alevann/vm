@@ -33,7 +33,7 @@ int main (int argc, char* argv[])
   while ((read = fread(&opr, sizeof(uint8_t), 1, file)) != 0)
   {
     uint8_t* lhs = gtkn(file);
-    uint8_t* rhs = opr != OUT ? gtkn(file) : NULL;
+    uint8_t* rhs = opr != OUT && opr != JMP && opr != JNE ? gtkn(file) : NULL;
 
     printf("Executing (%d) %s - %s %s \n", opr, OP_STR[opr], lhs, rhs);
 
@@ -71,6 +71,14 @@ int main (int argc, char* argv[])
     case CMP:
       op_cmp(r, lhs, rhs);
       dbg_log_registers(r);
+      break;
+    
+    case JMP:
+      op_jmp(r, lhs, file);
+      break;
+    
+    case JNE:
+      op_jne(r, lhs, file);
       break;
 
     case ERR:

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "token.h"
 #include "op.h"
+#include "hashmap.h"
 
 
 uint8_t gop (token* tkn)
@@ -22,6 +23,12 @@ uint8_t gop (token* tkn)
     return SUB;
   if (strcmp(tkn->str->data, "CMP") == 0)
     return CMP;
+  if (strcmp(tkn->str->data, "LBL") == 0)
+    return LBL;
+  if (strcmp(tkn->str->data, "JMP") == 0)
+    return JMP;
+  if (strcmp(tkn->str->data, "JNE") == 0)
+    return JNE;
   
   return ERR;
 }
@@ -64,6 +71,8 @@ int main (int argc, char* argv [])
   // Basically, an instruction followed by one or two arguments
 
   FILE* ot = fopen(filename, "wb");
+  hmap* labels = hmp_new();
+  printf("Looping now\n");
 
   for (int i = 0; i < token_count; i++)
   {
@@ -71,7 +80,11 @@ int main (int argc, char* argv [])
 
     // Get the operation and write it in the file 
     uint8_t op = gop(tkn);
-    fwrite(&op, sizeof(uint8_t), 1, ot);
+    // Labels are just offsets in the file so they aren't written anywhere
+    if (op != LBL)
+    {
+      fwrite(&op, sizeof(uint8_t), 1, ot);
+    }
 
     switch (op)
     {
@@ -88,11 +101,37 @@ int main (int argc, char* argv [])
       fwrite(lhs->str->data, sizeof(char), lhs->str->length, ot);
       fwrite(rhs->str->data, sizeof(char), rhs->str->length, ot);
       break;
+    
     case OUT:
       token* arg = tokens[++i];
 
       fwrite(arg->str->data, sizeof(char), arg->str->length, ot);
       break;
+    
+    // Define a label by adding it to the labels hashmap
+    case LBL:
+      token* lbl = tokens[++i];
+      uint8_t pos = ftell(ot);
+      hmp_set(labels, lbl->str, pos);
+      break;
+    
+    // Write the label id
+    case JMP:
+    case JNE:
+      token* tkn = tokens[++i];
+      uint8_t off = hmp_get(labels, tkn->str);
+      if (!off)
+      {
+        fprintf(stderr, "Error: label %s used before declaration\n", tkn->str->data);
+        return 1;
+      }
+      else
+      {
+        fwrite(&off, sizeof(uint8_t), 1, ot);
+      }
+      break;
+
+
     case ERR:
     default:
       fprintf(stderr, "Error while writing tokens to file: %s", dbg_display_tkn(tkn));

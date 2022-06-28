@@ -11,9 +11,12 @@ enum Op
   MUL,
   SUB,
   DIV,
-  CMP
+  CMP,
+  LBL,
+  JMP,
+  JNE
 };
 
-extern char* OP_STR [9];
+extern char* OP_STR [12];
 
 #endif

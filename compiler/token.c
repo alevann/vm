@@ -42,7 +42,7 @@ int isop (string* str)
   if (str->length < 3)
     return 0;
   
-  for (int i = 0; i < 8; i++)
+  for (int i = 0; i < 12; i++)
   {
     if (strcmp(str->data, OP_STR[i]) == 0)
       return 1;
@@ -101,6 +101,9 @@ token* gtkn (FILE* file)
     type = OPR;
   else if (isnum(str))
     type = LIT;
+  
+  // Could still be a label but I
+  // don't know how to check for it just yet lol
   
   return new_token(str, type);
 }

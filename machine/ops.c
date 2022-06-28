@@ -48,3 +48,15 @@ void op_cmp (registers* r, char* lhs, char* rhs)
   uint8_t bit = REG(r, lhs) == reg_or_literal(r, rhs);
   r->F ^= (-(unsigned long)bit ^ r->F) & (1UL << 0);
 }
+
+void op_jmp (registers* r, char* lhs, FILE* f)
+{
+  if ((r->F >> 0) & 1UL)
+    fseek(f, (uint8_t)*lhs, SEEK_SET);
+}
+
+void op_jne (registers* r, char* lhs, FILE* f)
+{
+  if (!((r->F >> 0) & 1UL))
+    fseek(f, (uint8_t)*lhs, SEEK_SET);
+}
