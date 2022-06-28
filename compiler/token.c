@@ -1,6 +1,15 @@
 #include "token.h"
+#include "op.h"
 #include <string.h>
 #include <ctype.h>
+
+
+char* tokentype_str [] = {
+  "UNK",
+  "OPR",
+  "LIT",
+  "REG"
+};
 
 
 token* new_token (string* str, enum tokentype type)
@@ -19,12 +28,10 @@ void dbg_log_tkns (token* tkns [], size_t size)
 }
 
 char* dbg_display_tkn (token* tkn)
-{
-  char* types [] = { "UNK", "OPR", "LIT", "REG", "MUL", "DIV", "SUB" };
-  
+{ 
   // hope to never overflow, pc battery is almost dead
   char* out = malloc(sizeof(char) * 2048);
-  sprintf(out, "Token\t%s\t(%s)", tkn->str->data, types[tkn->type]);
+  sprintf(out, "Token\t%s\t(%s)", tkn->str->data, tokentype_str[tkn->type]);
   return out;
 }
 
@@ -35,11 +42,9 @@ int isop (string* str)
   if (str->length < 3)
     return 0;
   
-  char* ops[] = { "ERR", "SET", "ADD", "END", "OUT", "MUL", "DIV", "SUB" };
-
   for (int i = 0; i < 8; i++)
   {
-    if (strcmp(str->data, ops[i]) == 0)
+    if (strcmp(str->data, OP_STR[i]) == 0)
       return 1;
   }
   return 0;

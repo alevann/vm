@@ -3,7 +3,7 @@
 #include <libgen.h>
 #include <string.h>
 #include "token.h"
-#include "../op.h"
+#include "op.h"
 
 
 uint8_t gop (token* tkn)
