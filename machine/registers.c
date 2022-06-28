@@ -15,6 +15,12 @@ registers* reg_new ()
   return r;
 }
 
+void print_bin(uint32_t value)
+{
+  for (int i = sizeof(uint32_t) * 7; i >= 0; i--)
+    printf("%d", (value & (1 << i)) >> i );
+}
+
 void dbg_log_registers (registers* r)
 {
   printf("Registers:\n");
@@ -23,7 +29,7 @@ void dbg_log_registers (registers* r)
   printf("\tC: %d", r->C);
   printf("\tD: %d", r->D);
   printf("\tE: %d", r->E);
-  printf("\tF: %d", r->F);
+  printf("\tF: "); print_bin(r->F);
   printf("\n");
 }
 

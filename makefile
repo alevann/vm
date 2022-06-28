@@ -19,4 +19,4 @@ cbaes: clean build compiler machine
 	$(VM) $(SCRIPT).ax
 
 clean:
-	rm -rf $(BUILD_FOLDER)
+	rm -rf $(BUILD_FOLDER) *.ax

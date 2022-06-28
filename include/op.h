@@ -10,9 +10,10 @@ enum Op
   ADD,
   MUL,
   SUB,
-  DIV
+  DIV,
+  CMP
 };
 
-extern char* OP_STR [8];
+extern char* OP_STR [9];
 
 #endif

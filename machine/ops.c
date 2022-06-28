@@ -42,3 +42,9 @@ void op_out (registers* r, char* lhs)
 {
   printf("%d\n", REG(r, lhs));
 }
+
+void op_cmp (registers* r, char* lhs, char* rhs)
+{
+  uint8_t bit = REG(r, lhs) == reg_or_literal(r, rhs);
+  r->F ^= (-(unsigned long)bit ^ r->F) & (1UL << 0);
+}

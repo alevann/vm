@@ -32,8 +32,8 @@ int main (int argc, char* argv[])
 
   while ((read = fread(&opr, sizeof(uint8_t), 1, file)) != 0)
   {
-    char* lhs = gtkn(file);
-    char* rhs = opr != OUT ? gtkn(file) : NULL;
+    uint8_t* lhs = gtkn(file);
+    uint8_t* rhs = opr != OUT ? gtkn(file) : NULL;
 
     printf("Executing (%d) %s - %s %s \n", opr, OP_STR[opr], lhs, rhs);
 
@@ -66,6 +66,11 @@ int main (int argc, char* argv[])
 
     case OUT:
       op_out(r, lhs);
+      break;
+    
+    case CMP:
+      op_cmp(r, lhs, rhs);
+      dbg_log_registers(r);
       break;
 
     case ERR:

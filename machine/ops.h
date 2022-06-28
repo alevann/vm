@@ -8,6 +8,7 @@ void op_add(registers*, char*, char*);
 void op_sub(registers*, char*, char*);
 void op_mul(registers*, char*, char*);
 void op_div(registers*, char*, char*);
+void op_cmp(registers*, char*, char*);
 void op_out(registers*, char*);
 
 #endif

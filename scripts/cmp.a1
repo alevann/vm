@@ -1,0 +1,8 @@
+SET A 8
+SET B 7
+CMP A B
+OUT F
+SET C 1
+SET D 1
+CMP C D
+OUT F

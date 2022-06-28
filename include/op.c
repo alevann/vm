@@ -1,6 +1,6 @@
 #include "op.h"
 
-char* OP_STR [8] = {
+char* OP_STR [9] = {
   "ERR",
   "SET",
   "OUT",
@@ -8,5 +8,6 @@ char* OP_STR [8] = {
   "ADD",
   "MUL",
   "SUB",
-  "DIV"
+  "DIV",
+  "CMP"
 };
