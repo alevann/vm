@@ -4,7 +4,6 @@
 
 #include <stdlib.h>
 
-
 // Size delta added to a string when reallocating
 #define REALLOC_SIZE 64
 
@@ -39,7 +38,30 @@ typedef struct {
 string* str_new (size_t prealloc);
 
 /**
- * Safe version of `str_add_c`.
+ * Frees a string and its underlying buffer
+ */
+string* str_free (string*);
+
+
+/**
+ * Safe version of `str_adds`.
+ * 
+ * Appends a string at the of another and guarantees
+ * it's terminated. The function may reallocate the string
+ * if needed.
+ */
+void str_adds_s (string*, char*);
+
+/**
+ * Unsafely adds a string at the end of another.
+ * No bounds-checking is performed and 
+ * the string is not null-terminated.
+ */
+void str_adds (string*, char*, size_t);
+
+
+/**
+ * Safe version of `str_addc`.
  * 
  * Appends a character at the end of the string and
  * guarantees it is followed by a null-terminator,
@@ -47,19 +69,25 @@ string* str_new (size_t prealloc);
  * would overflow adding these characters and
  * reallocates the string if needed.
  */
-void str_add_c_s (string* str, char c);
+void str_addc_s (string*, char);
 
 /**
  * Unsafely adds a character at the end of a string.
  * No bounds-checking is performed and the string 
  * is not null terminated.
  */
-void str_add_c (string* str, char c);
+void str_addc (string*, char);
+
+/**
+ * Adds a null-terminator at the end of a string
+ */
+void str_terminate (string*);
 
 /**
  * Reallocates the underlying buffer to be `str->alloc + delta`
  * allowing both shrinking and expanding of the string.
  */
-void str_realloc (string* str, size_t delta);
+void str_realloc (string*, size_t);
+
 
 #endif

@@ -1,6 +1,4 @@
-#include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "string.h"
 
 
@@ -11,27 +9,55 @@ string* str_new (size_t prealloc)
   str->data = malloc(sizeof(char) * prealloc);
   str->length = 0;
   str->alloc = prealloc;
-
   return str;
+}
+
+string* str_free (string* str)
+{
+  free(str->data);
+  free(str);
+}
+
+
+void str_terminate (string* str)
+{
+  str->data[str->length] = '\0';
+}
+
+
+void str_adds_s (string* str, char* cptr)
+{
+  size_t csize = strlen(cptr);
+  
+  if (str->length + csize >= str->alloc)
+    str_realloc(str, csize + REALLOC_SIZE);
+
+  str_adds(str, cptr, csize);
+  str_terminate(str);
+}
+
+void str_adds (string* str, char* cptr, size_t size)
+{
+  for (int i = 0; i < size; i++)
+    str_addc(str, cptr[i]);
 }
 
 // Safe version of `str_add_c` which adds a null-terminator
 // after the passed character and checks the bound of the
 // string to avoid overflows, reallocates if necessary
-void str_add_c_s (string* str, char c)
+void str_addc_s (string* str, char c)
 {
-  // Check if oob with 2 more chars (passed char and null-terminator)
   if (str->length + 2 >= str->alloc)
     str_realloc(str, REALLOC_SIZE);
-
-  str_add_c(str, c);
-  str->data[str->length + 1] = '\0';
+  
+  str_addc(str, c);
+  str_terminate(str);
 }
 
 // Unsafe add character function which appends a character 
 // at the end of the of the string 
 // without adding a null-terminator and without checking bounds
-void str_add_c (string* str, char c)
+void str_addc (string* str, char c)
 {
   str->data[(str->length)++] = c;
 }
