@@ -3,13 +3,15 @@
 #include "hashmap.h"
 
 
-size_t hash (struct hashkey* key)
+/// Implementation of the default hash function
+/// Jenkins one-at-a-time hashing algoritm
+size_t hash (void* key, size_t size)
 {
   uint8_t hash, i;
   
-  for (hash = i = 0; i < key->size; ++i)
+  for (hash = i = 0; i < size; ++i)
   {
-    hash += ((char*) key->data)[i];
+    hash += ((char*) key)[i];
     hash += (hash << 10);
     hash ^= (hash >>  6);
   }
@@ -21,37 +23,40 @@ size_t hash (struct hashkey* key)
   return hash;
 }
 
-size_t hmp_idx (struct hashmap* hmp, struct hashkey* key)
+/// Returns an index given a key
+size_t hmp_idx (struct hashmap* hmp, void* key)
 {
-  return (*hmp->hgen)(key) % HASHMAP_ALLOC_SIZE;
+  return (*hmp->hgen)(key, hmp->ksiz) % HASHMAP_ALLOC_SIZE;
 }
 
 
-struct hashmap* hmp_new (size_t size, hashgen hgen)
+struct hashmap* hmp_new (size_t dsiz, size_t ksiz, hashgen hgen)
 {
   struct hashmap* hmp = malloc(sizeof(struct hashmap));
-  hmp->data = malloc(size * HASHMAP_ALLOC_SIZE);
-  hmp->size = size;
-  hmp->hgen = hgen;
+  hmp->data = malloc(dsiz * HASHMAP_ALLOC_SIZE);
+  hmp->dsiz = dsiz;
+  hmp->ksiz = ksiz;
+  hmp->hgen = hgen == NULL ? hash : hgen;
   return hmp;
 }
 
-struct hashmap* hmp_new (size_t size)
+void hmp_free (struct hashmap* hmp)
 {
-  return hmp_new(size, hash);
+  free(hmp->data);
+  free(hmp);
 }
 
-void* hmp_get (struct hashmap* hmp, struct hashkey* key)
+void* hmp_get (struct hashmap* hmp, void* key)
 {
   return hmp->data[hmp_idx(hmp, key)];
 }
 
-void  hmp_set (struct hashmap* hmp, struct hashkey* key, void* data)
+void  hmp_set (struct hashmap* hmp, void* key, void* data)
 {
   hmp->data[hmp_idx(hmp, key)] = data;
 }
 
-void* hmp_del (struct hashmap* hmp, struct hashkey* key)
+void* hmp_del (struct hashmap* hmp, void* key)
 {
   size_t idx = hmp_idx(hmp, key);
   void* data = hmp->data[idx];
