@@ -71,7 +71,7 @@ int main (int argc, char* argv [])
   // Basically, an instruction followed by one or two arguments
 
   FILE* ot = fopen(filename, "wb");
-  hmap* labels = hmp_new();
+  hmap* labels = hmp_new(sizeof(uint8_t), sizeof(string*), NULL);
   printf("Looping now\n");
 
   for (int i = 0; i < token_count; i++)
@@ -112,14 +112,14 @@ int main (int argc, char* argv [])
     case LBL:
       token* lbl = tokens[++i];
       uint8_t pos = ftell(ot);
-      hmp_set(labels, lbl->str, pos);
+      hmp_set(labels, lbl->str->data, pos);
       break;
     
     // Write the label id
     case JMP:
     case JNE:
       token* tkn = tokens[++i];
-      uint8_t off = hmp_get(labels, tkn->str);
+      uint8_t off = hmp_get(labels, tkn->str->data);
       if (!off)
       {
         fprintf(stderr, "Error: label %s used before declaration\n", tkn->str->data);
@@ -140,8 +140,8 @@ int main (int argc, char* argv [])
     }
   }
 
-  // Remember to close the file
   fclose(ot);
+  hmp_free(labels);
 
   return 0;
 }
