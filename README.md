@@ -138,13 +138,14 @@ Files compiled by the A1C have a simple structure, each token in a `.a1` file is
 Section for future stuff and notes.
 
 TODO:
-* Labels can't be used before being declared, not nice
-* A better hashmap implementation is needed, also it should be moved in the `include` directory
-* `string` should be moved in the `include` directory and it should have a method to append other strings (`str_app` and `str_app_s`)
-* The `type` field in the compiler's `token` is pretty useless right now, I feel the direction is right but it's not quite there yet
-* The VM has 32-bit registers whereas the compiler compiles 8-bit tokens... should fix that lol
-* The JMP instruction should not check for equality, instead a new instruction like JIE (Jump If Equal) should be implemented, JMP should always jump
-* POP and PUSH instructions to store more than 4 things at a time
+
+* [ ] Labels can't be used before being declared, not nice
+* [ ] The `type` field in the compiler's `token` is pretty useless right now, I feel the direction is right but it's not quite there yet
+* [X] A better hashmap implementation is needed, also it should be moved in the `include` directory
+* [X] `string` should be moved in the `include` directory and it should have a method to append other strings (`str_app` and `str_app_s`)
+* [ ] The VM has 32-bit registers whereas the compiler compiles 8-bit tokens... should fix that lol
+* [ ] The JMP instruction should not check for equality, instead a new instruction like JIE (Jump If Equal) should be implemented, JMP should always jump
+* [ ] POP and PUSH instructions to store more than 4 things at a time
 
 ### VM Refactor / Rework
 
