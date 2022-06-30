@@ -9,10 +9,10 @@ build:
 	mkdir $(BUILD_FOLDER)
 
 compiler: build
-	gcc compiler/*.c include/*.c -o $(CMP) -I include/
+	gcc compiler/*.c include/a1/*.c -o $(CMP) -I include/
 
 machine: build
-	gcc machine/*.c include/*.c -o $(VM) -I include/
+	gcc machine/*.c include/a1/*.c -o $(VM) -I include/
 
 cbcates: clean build compiler machine
 	$(CMP) scripts/$(SCRIPT).a1

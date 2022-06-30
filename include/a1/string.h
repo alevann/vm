@@ -3,6 +3,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 // Size delta added to a string when reallocating
 #define REALLOC_SIZE 64

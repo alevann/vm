@@ -3,7 +3,7 @@
 
 #include "registers.h"
 #include "ops.h"
-#include "op.h"
+#include "a1/op.h"
 
 char* gtkn (FILE* file)
 {

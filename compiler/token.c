@@ -1,5 +1,5 @@
 #include "token.h"
-#include "op.h"
+#include "a1/op.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -89,7 +89,7 @@ token* gtkn (FILE* file)
   int c = 0;
 
   while (isalnum(c = fgetc(file)))
-    str_add_c_s(str, c);
+    str_addc_s(str, c);
   
 
   enum tokentype type = UNK;

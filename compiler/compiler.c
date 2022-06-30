@@ -3,8 +3,9 @@
 #include <libgen.h>
 #include <string.h>
 #include "token.h"
-#include "op.h"
-#include "hashmap.h"
+#include "a1/string.h"
+#include "a1/op.h"
+#include "a1/hashmap.h"
 
 
 uint8_t gop (token* tkn)

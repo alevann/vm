@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "string.h"
+#include "a1/string.h"
 
 
-#define TOKEN_STR_MAX_SIZE 64
+#define TOKEN_STR_MAX_SIZE 641
 
 enum tokentype {
   UNK,
