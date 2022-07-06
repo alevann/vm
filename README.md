@@ -139,7 +139,8 @@ Section for future stuff and notes.
 
 TODO:
 
-* [ ] Labels can't be used before being declared, not nice
+* [ ] Refactor compiler
+* [x] Labels can't be used before being declared, not nice
 * [ ] The `type` field in the compiler's `token` is pretty useless right now, I feel the direction is right but it's not quite there yet
 * [X] A better hashmap implementation is needed, also it should be moved in the `include` directory
 * [X] `string` should be moved in the `include` directory and it should have a method to append other strings (`str_app` and `str_app_s`)
