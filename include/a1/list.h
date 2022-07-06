@@ -1,6 +1,9 @@
 #ifndef __A1_LIST_H_
 #define __A1_LIST_H_
 
+#include <stdlib.h>
+#include <stdint.h>
+
 /**
  * A function that is able to compare between two void pointers.
  * 
