@@ -36,6 +36,116 @@ uint8_t gop (token* tkn)
   return ERR;
 }
 
+/**
+ * Returns the name of the output file given an input
+ * As of now it basically just replaces .a1 with .ax
+ * Also discards path information, the file is written in the CWD
+ */
+char* outfn (char* path)
+{
+  char* name = basename(path);
+  size_t len = strlen(name);
+
+  char* filename = malloc(sizeof(char) * len);
+  strncpy(filename, name, len - 3);
+  strcpy(filename + (len - 3), ".ax");
+
+  return filename;
+}
+
+/**
+ * Opens a file and tokenizes it
+ * 
+ * @param tokens is required to have enough space
+ *  to store all the tokens in the file
+ */
+void opntknize (char* file, token* tokens[], size_t* token_count)
+{
+  FILE* in = fopen(file, "r");
+  tokenize(in, tokens, token_count);
+  fclose(in);
+
+  dbg_log_tkns(tokens, *token_count);
+}
+
+/**
+ * Writes two tokens to the passed file
+ */
+void wrttok (FILE* file, token* tokens[], int* cursor)
+{
+  token* tkn = tokens[++(*cursor)];
+  fwrite(tkn->str->data, sizeof(char), tkn->str->length, file);
+}
+
+int wrttoks (FILE* file, token* tokens[], size_t tokenc)
+{
+  hmap* labels = hmp_new(sizeof(uint8_t), sizeof(string*), NULL);
+  printf("Looping over %d tokens\n", tokenc);
+
+  for (int i = 0; i < tokenc; i++)
+  {
+    token* tkn = tokens[i];
+
+    // Get the operation and write it in the file 
+    uint8_t op = gop(tkn);
+    printf("Current OP: %s\n", OP_STR[op]);
+    // Labels are just offsets in the file so they aren't written anywhere
+    if (op != LBL)
+    {
+      printf("Writing op...\n");
+      fwrite(&op, sizeof(uint8_t), 1, file);
+    }
+
+    switch (op)
+    {
+    case SET: case ADD: case MUL: case DIV: case SUB: case CMP:
+      printf("Writing args...\n");
+      wrttok(file, tokens, &i);
+      wrttok(file, tokens, &i);
+      break;
+    
+    case OUT:
+      printf("Writing outs...\n");
+      wrttok(file, tokens, &i);
+      break;
+    
+    // Define a label by adding it to the labels hashmap
+    case LBL:
+      printf("Writing labl...\n");
+      token* lbl = tokens[++i];
+      uint8_t pos = ftell(file);
+      hmp_set(labels, lbl->str->data, pos);
+      break;
+    
+    // Write the label id
+    case JMP:
+    case JNE:
+      printf("Writing jmps...\n");
+      token* tkn = tokens[++i];
+      uint8_t off = hmp_get(labels, tkn->str->data);
+      if (!off)
+      {
+        fprintf(stderr, "Error: label %s used before declaration\n", tkn->str->data);
+        hmp_free(labels);
+        return 1;
+      }
+      else
+        fwrite(&off, sizeof(uint8_t), 1, file);
+      break;
+
+
+    case ERR:
+    default:
+      printf("Writing err...\n");
+      fprintf(stderr, "Error while writing tokens to file: %s", dbg_display_tkn(tkn));
+      hmp_free(labels);
+      return 1;
+    }
+  }
+
+  hmp_free(labels);
+  return 0;
+}
 
 int main (int argc, char* argv [])
 {
@@ -45,107 +155,23 @@ int main (int argc, char* argv [])
     return 1;
   }
 
-  printf("%s v%s >> ", CMPNAME, VERSION);
-
   char* file = argv[1];
-  printf("Compiling file: %s...\n", file);
+  printf("%s v%s >> Compiling file: %s...\n", CMPNAME, VERSION, file);
 
-  FILE* in = fopen(file, "r");
-  
   token* tokens[1024];
-  size_t token_count = 0;
-  tokenize(in, tokens, &token_count);
+  size_t tokenc = 0;
+  opntknize(file, &tokens, &tokenc);
 
-  fclose(in);
-
-  dbg_log_tkns(tokens, token_count);
-
-  // find the name of the output file 
-  char* name = basename(file);
-  size_t len = strlen(name);
-
-  char* filename = malloc(sizeof(char) * len);
-  strncpy(filename, name, len - 3);
-  strcpy(filename + (len - 3), ".ax");
-
+  char* filename = outfn(file);
   printf("Generating file: %s...\n", filename);
 
   // An A1 file is structured as follows
   //  <op> <a1> <a1?>
   // Basically, an instruction followed by one or two arguments
 
-  FILE* ot = fopen(filename, "wb");
-  hmap* labels = hmp_new(sizeof(uint8_t), sizeof(string*), NULL);
-  printf("Looping now\n");
+  FILE* outfile = fopen(filename, "wb");
+  int cmpres = wrttoks(outfile, tokens, tokenc);
+  fclose(outfile);
 
-  for (int i = 0; i < token_count; i++)
-  {
-    token* tkn = tokens[i];
-
-    // Get the operation and write it in the file 
-    uint8_t op = gop(tkn);
-    // Labels are just offsets in the file so they aren't written anywhere
-    if (op != LBL)
-    {
-      fwrite(&op, sizeof(uint8_t), 1, ot);
-    }
-
-    switch (op)
-    {
-    case SET:
-    case ADD:
-    case MUL:
-    case DIV:
-    case SUB:
-    case CMP:
-      // Get the two operands and write them to the file
-      token* lhs = tokens[++i];
-      token* rhs = tokens[++i];
-      
-      fwrite(lhs->str->data, sizeof(char), lhs->str->length, ot);
-      fwrite(rhs->str->data, sizeof(char), rhs->str->length, ot);
-      break;
-    
-    case OUT:
-      token* arg = tokens[++i];
-
-      fwrite(arg->str->data, sizeof(char), arg->str->length, ot);
-      break;
-    
-    // Define a label by adding it to the labels hashmap
-    case LBL:
-      token* lbl = tokens[++i];
-      uint8_t pos = ftell(ot);
-      hmp_set(labels, lbl->str->data, pos);
-      break;
-    
-    // Write the label id
-    case JMP:
-    case JNE:
-      token* tkn = tokens[++i];
-      uint8_t off = hmp_get(labels, tkn->str->data);
-      if (!off)
-      {
-        fprintf(stderr, "Error: label %s used before declaration\n", tkn->str->data);
-        return 1;
-      }
-      else
-      {
-        fwrite(&off, sizeof(uint8_t), 1, ot);
-      }
-      break;
-
-
-    case ERR:
-    default:
-      fprintf(stderr, "Error while writing tokens to file: %s", dbg_display_tkn(tkn));
-      fclose(ot);
-      return 1;
-    }
-  }
-
-  fclose(ot);
-  hmp_free(labels);
-
-  return 0;
+  return cmpres;
 }
