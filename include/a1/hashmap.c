@@ -64,9 +64,9 @@ void* hmp_del (struct hashmap* hmp, void* key)
   void* data = hmp->data[idx];
 
   hmp->data[idx] = NULL;
-  
+
   // FIXME: not all data can be compared with identity
-  list_rem(hmp->keys, key, identity);
+  list_del(hmp->keys, key, identity);
   
   return data;
 }

@@ -44,7 +44,7 @@ size_t list_add (struct list*, void*);
  * @param cmp a comparator function that can compare
  *  the data stored in the list
  */
-void* list_rem (struct list*, void* data, comparator cmp);
+void* list_del (struct list*, void* data, comparator cmp);
 /**
  * @brief returns non-zero if the list contains data in O(n)
  * @param data the data to look for in the list

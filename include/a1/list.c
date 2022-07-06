@@ -37,7 +37,7 @@ size_t list_add (struct list* list, void* data)
   return ++(list->size);
 }
 
-void* list_rem (struct list* list, void* data, comparator cmp)
+void* list_del (struct list* list, void* data, comparator cmp)
 {
   if (list->size == 0) {
     return NULL;
