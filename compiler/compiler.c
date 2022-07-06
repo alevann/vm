@@ -80,6 +80,7 @@ void wrttok (FILE* file, token* tokens[], int* cursor)
 int wrttoks (FILE* file, token* tokens[], size_t tokenc)
 {
   hmap* labels = hmp_new(sizeof(uint8_t), sizeof(string*), NULL);
+  hmap* missed = hmp_new(sizeof(uint8_t), sizeof(string*), NULL);
   printf("Looping over %d tokens\n", tokenc);
 
   for (int i = 0; i < tokenc; i++)
@@ -125,12 +126,26 @@ int wrttoks (FILE* file, token* tokens[], size_t tokenc)
       uint8_t off = hmp_get(labels, tkn->str->data);
       if (!off)
       {
-        fprintf(stderr, "Error: label %s used before declaration\n", tkn->str->data);
-        hmp_free(labels);
-        return 1;
+        // if the label is not defined:
+        // check to see if this is the first occurence
+        // if list is not null, it isn't
+        struct list* list = hmp_get(missed, tkn->str->data);
+        if (!list)
+        {
+          // initialize the list since there could be more
+          // than one mention before it's defined
+          list = list_new();
+          hmp_set(missed, tkn->str->data, list);
+        }
+        // Add the current position in the file to the list
+        // so that later it can be updated
+        uint8_t inf = ftell(file);
+        list_add(list, inf);
+        printf("placeholder in %d\n", inf);
+        // Write a placeholder value
+        off = 0;
       }
-      else
-        fwrite(&off, sizeof(uint8_t), 1, file);
+      fwrite(&off, sizeof(uint8_t), 1, file);
       break;
 
 
@@ -143,7 +158,65 @@ int wrttoks (FILE* file, token* tokens[], size_t tokenc)
     }
   }
 
+  if (missed->keys->size == 0)
+    goto ret;
+
+  // missed: hashmap<string, list<long>>
+  // missed->keys->head: string
+  // missed->keys[k]: list<long>
+  // usages: list<long>
+
+
+  // Loop over all missing labels
+  struct node* head = missed->keys->head;
+  struct node* foll;
+  printf("Starting missed label process with %s\n", head->data);
+  do {
+    printf("Checking if %s has been defined\n", head->data);
+    // Check if the label has been defined
+    uint8_t contains = hmp_contains(labels, head->data, streq);
+    if (!contains) {
+      printf("%s has not been defined!\n", head->data);
+      continue;
+    }
+    printf("%s has been defined\n", head->data);
+
+    // Get the offset of the label (i.e. where to jump in the file)
+    uint8_t off = hmp_get(labels, head->data);
+
+    // Loop over all usages of the label in the file
+    struct list* usages = hmp_get(missed, head->data);
+    printf("There's %d usages of %s\n", usages->size, head->data);
+    struct node* cursor = usages->head;
+    printf("FIrst usage of %s is at %d\n", head->data, cursor->data);
+    struct node* next;
+    do {
+      // Move where the label was used
+      fseek(file, cursor->data, SEEK_SET);
+      printf("Moved at correct offset!\n");
+      // Write the label's offset
+      fwrite(&off, sizeof(uint8_t), 1, file);
+      printf("Usage updated!\n");
+      // Remove the usage from the list
+      next = cursor->next;
+      list_del(usages, cursor->data, identity);
+      printf("Usage removed! next up: %p\n", next);
+    } while ((cursor = next));
+
+    // After having updated all the usages with the right value
+    // remove the label from the hashmap
+    printf("Deleting remnants...\n");
+    foll = head->next;
+    hmp_del(missed, head->data);
+    printf("Updated keys, %s has been resolved correctly\n", head->data);
+  } while ((head = foll));
+
+  if (missed->keys->size != 0)
+    fprintf(stderr, "Something went wrong, %d labels left\n", missed->keys->size);
+
+  ret:
   hmp_free(labels);
+  hmp_free(missed);
   return 0;
 }
 

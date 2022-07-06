@@ -43,6 +43,7 @@ struct hashmap* hmp_new (size_t dsiz, size_t ksiz, hashgen hgen)
 
 void hmp_free (struct hashmap* hmp)
 {
+  free(hmp->keys);
   free(hmp->data);
   free(hmp);
 }
@@ -64,9 +65,11 @@ void* hmp_del (struct hashmap* hmp, void* key)
   void* data = hmp->data[idx];
 
   hmp->data[idx] = NULL;
+  printf("Nullified data\n");
 
   // FIXME: not all data can be compared with identity
   list_del(hmp->keys, key, identity);
+  printf("Removed from list\n");
   
   return data;
 }

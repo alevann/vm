@@ -30,7 +30,11 @@ struct list {
   size_t size;
 };
 
-struct node;
+struct node {
+  struct node* next;
+  struct node* prev;
+  void* data;
+};
 
 /// Creates a new empty list
 struct list* list_new ();
@@ -57,5 +61,10 @@ uint8_t list_contains (struct list*, void* data, comparator);
  * @brief comparator for pointer equality
  */
 uint8_t identity (void*, void*);
+
+/**
+ * @brief comparator for string equality (case sensitive)
+ */
+uint8_t streq (void*, void*);
 
 #endif

@@ -2,12 +2,6 @@
 #include <string.h>
 #include <stdio.h>
 
-struct node {
-  struct node* next;
-  struct node* prev;
-  void* data;
-};
-
 struct list* list_new ()
 {
   struct list* list = malloc(sizeof(struct list));
@@ -48,7 +42,9 @@ void* list_del (struct list* list, void* data, comparator cmp)
     if (!cmp(data, cursor->data)) {
       continue;
     }
+    printf("Found a match while deleting from list!\n");
     void* value = cursor->data;
+    printf("Returning %p\n", value);
 
     // Update previous and next nodes to remove the cursor from the list 
     if (cursor->next) cursor->next->prev = cursor->prev;
@@ -69,13 +65,17 @@ void* list_del (struct list* list, void* data, comparator cmp)
 
 uint8_t list_contains (struct list* list, void* data, uint8_t (*cmp)(void*, void*))
 {
+  printf("Checking if list contains!\n");
   if (list->size == 0) {
+    printf("List is empty\n");
     return 0;
   }
 
   struct node* cursor = list->head;
   do {
+    printf("checking next...\n");
     if (cmp(data, cursor->data)) {
+      printf("FOund a match!\n");
       return 1;
     }
   } while ((cursor = cursor->next));
@@ -86,4 +86,9 @@ uint8_t list_contains (struct list* list, void* data, uint8_t (*cmp)(void*, void
 uint8_t identity (void* v1, void* v2)
 {
   return v1 == v2;
+}
+
+uint8_t streq (void* v1, void* v2)
+{
+  return strcmp(v1, v2) == 0;
 }

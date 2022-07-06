@@ -9,7 +9,7 @@ build:
 	mkdir $(BUILD_FOLDER)
 
 compiler: build
-	gcc compiler/*.c include/a1/*.c -o $(CMP) -I include/
+	gcc compiler/*.c include/a1/*.c -o $(CMP) -I include/ $(CFLAGS)
 
 machine: build
 	gcc machine/*.c include/a1/*.c -o $(VM) -I include/
