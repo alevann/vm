@@ -7,6 +7,8 @@
 #include "a1/op.h"
 #include "a1/hashmap.h"
 
+#define VERSION "0.0.1"
+#define CMPNAME "A1 Compiler"
 
 uint8_t gop (token* tkn)
 {
@@ -43,6 +45,7 @@ int main (int argc, char* argv [])
     return 1;
   }
 
+  printf("%s v%s >> ", CMPNAME, VERSION);
 
   char* file = argv[1];
   printf("Compiling file: %s...\n", file);
