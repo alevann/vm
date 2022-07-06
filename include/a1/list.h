@@ -53,4 +53,9 @@ void* list_rem (struct list*, void* data, comparator cmp);
  */
 uint8_t list_contains (struct list*, void* data, comparator);
 
+/**
+ * @brief comparator for pointer equality
+ */
+uint8_t identity (void*, void*);
+
 #endif

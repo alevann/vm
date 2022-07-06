@@ -3,7 +3,7 @@
 
 
 #include <stdlib.h>
-
+#include "list.h"
 
 /**
  * Hash generator function which takes a key and its size
@@ -27,6 +27,7 @@ typedef struct hashmap {
   size_t dsiz;  // Data size
   size_t ksiz;  // Key size
   hashgen hgen;
+  struct list* keys;
 } hmap;
 
 
@@ -54,5 +55,21 @@ void* hmp_get (struct hashmap*, void*);
 /// Sets the value of a key to NULL and
 /// returns the previous value if any
 void* hmp_del (struct hashmap*, void*);
+
+/**
+ * Returns non-zero if the hashmap contains the key
+ *
+ * Uses identity under the hood so this only works
+ * if the key can be compared with the `==` operator
+ *
+ * Use `hmp_contains` to specify a different comparator
+ */
+uint8_t hmp_has (struct hashmap*, void*);
+
+/**
+ * Returns non-zero if the comparators determines the
+ * hashmap contains the key
+ */
+uint8_t hmp_contains (struct hashmap*, void*, comparator);
 
 #endif

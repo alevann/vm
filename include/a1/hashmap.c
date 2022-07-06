@@ -34,6 +34,7 @@ struct hashmap* hmp_new (size_t dsiz, size_t ksiz, hashgen hgen)
 {
   struct hashmap* hmp = malloc(sizeof(struct hashmap));
   hmp->data = malloc(dsiz * HASHMAP_ALLOC_SIZE);
+  hmp->keys = list_new();
   hmp->dsiz = dsiz;
   hmp->ksiz = ksiz;
   hmp->hgen = hgen == NULL ? hash : hgen;
@@ -54,6 +55,7 @@ void* hmp_get (struct hashmap* hmp, void* key)
 void  hmp_set (struct hashmap* hmp, void* key, void* data)
 {
   hmp->data[hmp_idx(hmp, key)] = data;
+  list_add(hmp->keys, key);
 }
 
 void* hmp_del (struct hashmap* hmp, void* key)
@@ -63,5 +65,18 @@ void* hmp_del (struct hashmap* hmp, void* key)
 
   hmp->data[idx] = NULL;
   
+  // FIXME: not all data can be compared with identity
+  list_rem(hmp->keys, key, identity);
+  
   return data;
+}
+
+uint8_t hmp_has (struct hashmap* hmp, void* key)
+{
+  return hmp_contains(hmp, key, identity);
+}
+
+uint8_t hmp_contains (struct hashmap* hmp, void* key, comparator cmp)
+{
+  return list_contains(hmp->keys, key, cmp);
 }
