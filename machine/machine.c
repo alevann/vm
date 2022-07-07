@@ -27,6 +27,21 @@ int main (int argc, char* argv[])
   FILE* file = fopen(filename, "rb");
   registers* r = reg_new();
 
+  void* funcs[] = {
+    NULL,
+    op_set,
+    op_out,
+    NULL,
+    op_add,
+    op_mul,
+    op_sub,
+    op_div,
+    op_cmp,
+    NULL,
+    op_jmp,
+    op_jne
+  };
+
   size_t read;
   uint8_t opr;
 
@@ -37,50 +52,33 @@ int main (int argc, char* argv[])
 
     printf("Executing (%d) %s - %s %s \n", opr, OP_STR[opr], lhs, rhs);
 
+    if (opr != ERR && opr != END && opr != LBL)
+    {
+      if (opr == JMP || opr == JNE)
+      {
+        ((void (*)(registers*, char*, FILE*))funcs[opr])(r, lhs, file);
+      }
+      else if (opr == OUT)
+      {
+        ((void (*)(registers*, char*))funcs[opr])(r, lhs);
+      }
+      else
+      {
+        ((void (*)(registers*, char*, char*))funcs[opr])(r, lhs, rhs);
+        dbg_log_registers(r);
+      }
+
+      goto next;
+    }
+
     switch (opr)
     {
-    case SET:
-      op_set(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
+    case LBL:
+      long off = ftell(file);
+      fprintf("Error: Label leftover from compilation at %p\n", off);
+      fclose(file);
+      return 1;
     
-    case ADD:
-      op_add(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
-
-    case MUL:
-      op_mul(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
-
-    case SUB:
-      op_sub(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
-
-    case DIV:
-      op_div(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
-
-    case OUT:
-      op_out(r, lhs);
-      break;
-    
-    case CMP:
-      op_cmp(r, lhs, rhs);
-      dbg_log_registers(r);
-      break;
-    
-    case JMP:
-      op_jmp(r, lhs, file);
-      break;
-    
-    case JNE:
-      op_jne(r, lhs, file);
-      break;
-
     case ERR:
       fclose(file);
       return 1;
@@ -94,6 +92,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
+    next:
     free(lhs);
     if (opr != OUT)
       free(rhs);
