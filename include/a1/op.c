@@ -1,6 +1,6 @@
 #include "op.h"
 
-char* OP_STR [12] = {
+char* OP_STR [] = {
   "ERR",
   "SET",
   "OUT",

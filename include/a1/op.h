@@ -18,6 +18,6 @@ enum Op
   CALL
 };
 
-extern char* OP_STR [12];
+extern char* OP_STR [];
 
 #endif
