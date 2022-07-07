@@ -12,5 +12,6 @@ char* OP_STR [12] = {
   "CMP",
   "LBL",
   "JMP",
-  "JNE"
+  "JNE",
+  "CALL"
 };

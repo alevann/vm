@@ -14,7 +14,8 @@ enum Op
   CMP,
   LBL,
   JMP,
-  JNE
+  JNE,
+  CALL
 };
 
 extern char* OP_STR [12];

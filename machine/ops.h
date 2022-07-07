@@ -3,6 +3,8 @@
 
 #include "registers.h"
 
+void op_err();
+void op_end();
 void op_set(registers*, char*, char*);
 void op_add(registers*, char*, char*);
 void op_sub(registers*, char*, char*);

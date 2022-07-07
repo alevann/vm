@@ -13,6 +13,18 @@ uint32_t reg_or_literal (registers* r, char* str)
     return atoi(str);
 }
 
+void op_err ()
+{
+  fprintf(stderr, "Reached error instruction\n");
+  exit(1);
+}
+
+void op_end ()
+{
+  printf("Reached end instruction\n");
+  exit(0);
+}
+
 void op_set (registers* r, char* lhs, char* rhs)
 {
   REG(r, lhs) = reg_or_literal(r, rhs);

@@ -148,10 +148,10 @@ int wrttoks (FILE* file, token* tokens[], size_t tokenc)
       fwrite(&off, sizeof(uint8_t), 1, file);
       break;
 
-
-    case ERR:
+    case ERR: case END:
+      break;
+    
     default:
-      printf("Writing err...\n");
       fprintf(stderr, "Error while writing tokens to file: %s", dbg_display_tkn(tkn));
       hmp_free(labels);
       return 1;

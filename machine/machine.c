@@ -28,10 +28,10 @@ int main (int argc, char* argv[])
   registers* r = reg_new();
 
   void* funcs[] = {
-    NULL,
+    op_err,
     op_set,
     op_out,
-    NULL,
+    op_end,
     op_add,
     op_mul,
     op_sub,
@@ -47,6 +47,11 @@ int main (int argc, char* argv[])
 
   while ((read = fread(&opr, sizeof(uint8_t), 1, file)) != 0)
   {
+    if (opr == ERR || opr == END)
+    {
+      ((void (*)(void))funcs[opr])();
+    }
+
     uint8_t* lhs = gtkn(file);
     uint8_t* rhs = opr != OUT && opr != JMP && opr != JNE ? gtkn(file) : NULL;
 
